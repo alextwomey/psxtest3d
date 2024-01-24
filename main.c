@@ -88,7 +88,7 @@ int main() {
 void Initialize() {
 
     //get the CD system started so you can read files
-	//ReadCDInit();
+	ReadCDInit();
 
 	//do all the necessary steps for getting
 	//the screen ready to display things
@@ -99,25 +99,22 @@ void Initialize() {
 	initializePad();
 
     //Start reading the CD
-	//cd_open();
+	cd_open();
 
 	//read a specific file by name and
 	//store it in the cdData variable.
 	//(make sure to edit mkpsxiso/cuesheet.xml and
     //add it there or it won't be included on the CD)
     //The number is the slot you want to store the file into.
-	initThatCd();
 	printf("CD File loading Initialized \n");
 
 	//, &cdData[0]
-	//pointer for file loaded from cd
-	u_int *filebuff;
-	if( filebuff = (u_int*)cd_read_file_test("\\\\YOSHI.TIM;1")){
-		printf("fileLoaded!!!!!! at %d", filebuff);
-	}
-	//cd_read_file_test("yoshi.TMD");
-	//cd_read_file_test("GRID.TMD");
-
+	//cdData[0] = (u_int*)cd_read_file_test("\\YOSHI.TMD;1");
+	//cdData[1] = (u_int*)cd_read_file_test("\\YOSHI.TIM;1");
+	//cdData[2] = (u_int*)cd_read_file_test("\\GRID.TMD;1");
+	cd_read_file("YOSHI.TMD", &cdData[0]);
+	cd_read_file("YOSHI.TIM", &cdData[1]);
+	cd_read_file("GRID.TMD", &cdData[2]);
 	//Stop reading the CD
 	cd_close();
 
@@ -217,7 +214,7 @@ void Render () {
 	FntPrint("X: forward\n");
 	FntPrint("Square: reverse\n");
 	FntPrint("D-pad: Steer\n");
-	FntPrint("Select: Reset RC Car\n");
+	FntPrint("Select: Reset\n");
 	//FntPrint("Car Position: (%d, %d, %d)\n", car.position.vx, car.position.vy, car.position.vz);
 	//FntPrint("Car Rotation: (%d, %d, %d)\n", car.rotation.vx, car.rotation.vy, car.rotation.vz);
 

@@ -1,4 +1,4 @@
-#include <LIBCD.H>
+#include <LIBDS.H>
 #include <STRINGS.H>
 #include <SYS/TYPES.H>
 #include <STDLIB.H>
@@ -32,28 +32,31 @@ void initThatCd(void){
 }
 
 char *cd_read_file_test(unsigned char* file_path){
-	CdlFILE filePos;
+	DslFILE filePos;
 	int numsecs;
 	char *buff;
 	printf("about to search for file %s\n",file_path);
-	if( CdSearchFile(&filePos, file_path)==NULL){
+	if( DsSearchFile(&filePos, file_path)==NULL){
 		printf("File %s not found \n",file_path);
 	}else{
 		printf("File %s found!!!!!!!\n",file_path);
 		/* calculate number of sectors to read for the file */
     	numsecs = (filePos.size+2047)/2048;
-		printf("Size of sectors to read: %d");
+		printf("Size of sectors to read: %d\n");
 		/* allocate buffer for the file */
 		buff = (char*)malloc( 2048*numsecs );
 		
 		/* set read target to the file */
-		CdControl( CdlSetloc, (u_char*)&filePos, 0 );
+		DsControl( DslSetloc, (u_char*)&filePos, 0 );
 		
 		/* start read operation */
-		CdRead( numsecs, (u_long*)buff, CdlModeSpeed );
+		DsRead(&filePos.pos, ((*buff + SECTOR - 1) / SECTOR), (u_long*)buff, DslModeSpeed);
 		
 		/* wait until the read operation is complete */
-		CdReadSync( 0, 0 );
+		printf("read sync \n");
+		while(DsReadSync(NULL));
+		printf("file Loaded!\n");
+		return buff;
 	}
 	
 }
@@ -78,9 +81,9 @@ void cd_read_file(unsigned char* file_path, u_long** file) {
 	strcat(file_path_raw, file_path);
 	strcat(file_path_raw, ";1");
 	printf("Loading file from CD: %s\n", file_path_raw);
+
 	// Search for file on disc
-	DsSearchFile(file_path_raw, temp_file_info);
-	
+	DsSearchFile(temp_file_info, file_path_raw);
 
 	// Read the file if it was found
 	if(temp_file_info->size > 0) {
@@ -89,11 +92,9 @@ void cd_read_file(unsigned char* file_path, u_long** file) {
 		*sectors_size = temp_file_info->size + (SECTOR % temp_file_info->size);
 		printf("...file buffer size needed: %d\n", *sectors_size);
 		printf("...sectors needed: %d\n", (*sectors_size + SECTOR - 1) / SECTOR);
-		printf("Making pointer: ");
 		*file = malloc3(*sectors_size + SECTOR);
-		printf("File pointer made: ");
+		
 		DsRead(&temp_file_info->pos, (*sectors_size + SECTOR - 1) / SECTOR, *file, DslModeSpeed);
-		printf("DsRead finished");
 		while(DsReadSync(NULL));
 		printf("...file loaded!\n");
 	} else {
