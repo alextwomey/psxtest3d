@@ -15,7 +15,6 @@
 #include "Audio.c"
 #include "2D.c"
 #include "3D.c"
-#include <LIBSN.H>
 
 //Declare any function you make here
 void Initialize();
@@ -111,16 +110,22 @@ void Initialize() {
 	//cdData[1] = (u_int*)cd_read_file_test("\\YOSHI.TIM;1");
 	//cdData[2] = (u_int*)cd_read_file_test("\\GRID.TMD;1");
 	cd_read_file("YOSHI.TMD", &cdData[0]);
-	//cd_read_file("YOSHI.TIM", &cdData[1]);
-	//cd_read_file("GRID.TMD", &cdData[2]);
+	printf("cdData[0]: %ld\n",cdData[0]);
+	cd_read_file("YOSHI.TIM", &cdData[1]);
+	printf("cdData[1]: %ld\n",cdData[1]);
+	cd_read_file("GRID.TMD", &cdData[2]);
+	printf("cdData[2]: %ld\n",cdData[2]);
 	//Stop reading the CD
 	cd_close();
+	printf("cdData[0]: %ld\n",cdData[0]);
+	printf("cdData[1]: %ld\n",cdData[1]);
+	printf("cdData[2]: %ld\n",cdData[2]);
 
 	//load the TIM texture into VRAM
 	//The number is the slot you want to load from.
 	//when we used the cd_read_file function, we
 	//stored the CAR.TIM texture in slot 1
-    //loadTexture((u_char *)cdData[1]);
+    loadTexture((u_char *)cdData[1]);
 
 }
 

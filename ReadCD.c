@@ -3,9 +3,8 @@
 #include <SYS/TYPES.H>
 #include <STDLIB.H>
 #include <STDIO.H>
-#include <LIBSN.H>
 #include <stdint.h>
-#include <pcdrv.h>
+#include "pcdrv.h"
 
 
 
@@ -22,7 +21,7 @@
 #define FILEMODE_READONLY 0
 #define FILEMODE_WRITEONLY 1
 #define FILEMODE_READWRITE 2
-uint8_t buffer[2048] = { 0 };
+
 #endif
 
 
@@ -65,13 +64,13 @@ void cd_close() {
 	#endif
 }
 
-void cd_read_file(unsigned char* file_path, u_long** file) {
+void cd_read_file(unsigned char* filePath, u_long** file) {
 	#ifdef _RELEASE_
-	u_char* file_path_raw;
-	int* sectors_size;
-	DslFILE* temp_file_info;
-	sectors_size = malloc3(sizeof(int));
-	temp_file_info = malloc3(sizeof(DslFILE));
+	u_char* filePathRaw;
+	int* sectorsSize;
+	DslFILE* tempFileInfo;
+	sectorsSize = malloc3(sizeof(int));
+	tempFileInfo = malloc3(sizeof(DslFILE));
 
 	// Exit if libDs isn't initialized
 	if(!didInitDs) {
@@ -80,80 +79,89 @@ void cd_read_file(unsigned char* file_path, u_long** file) {
 	}
 
 	// Get raw file path
-	file_path_raw = malloc3(4 + strlen(file_path));
-	strcpy(file_path_raw, "\\");
-	strcat(file_path_raw, file_path);
-	strcat(file_path_raw, ";1");
-	printf("Loading file from CD: %s\n", file_path_raw);
+	filePathRaw = malloc3(4 + strlen(filePath));
+	strcpy(filePathRaw, "\\");
+	strcat(filePathRaw, filePath);
+	strcat(filePathRaw, ";1");
+	printf("Loading file from CD: %s\n", filePathRaw);
 
 	// Search for file on disc
-	DsSearchFile(temp_file_info, file_path_raw);
+	DsSearchFile(tempFileInfo, filePathRaw);
 
 	// Read the file if it was found
-	if(temp_file_info->size > 0) {
+	if(tempFileInfo->size > 0) {
 		printf("...file found\n");
-		printf("...file size: %lu\n", temp_file_info->size);
-		*sectors_size = temp_file_info->size + (SECTOR % temp_file_info->size);
-		printf("...file buffer size needed: %d\n", *sectors_size);
-		printf("...sectors needed: %d\n", (*sectors_size + SECTOR - 1) / SECTOR);
-		*file = malloc3(*sectors_size + SECTOR);
+		printf("...file size: %lu\n", tempFileInfo->size);
+		*sectorsSize = tempFileInfo->size + (SECTOR % tempFileInfo->size);
+		printf("...file buffer size needed: %d\n", *sectorsSize);
+		printf("...sectors needed: %d\n", (*sectorsSize + SECTOR - 1) / SECTOR);
+		*file = malloc3(*sectorsSize + SECTOR);
 		
-		DsRead(&temp_file_info->pos, (*sectors_size + SECTOR - 1) / SECTOR, *file, DslModeSpeed);
+		DsRead(&tempFileInfo->pos, (*sectorsSize + SECTOR - 1) / SECTOR, *file, DslModeSpeed);
 		while(DsReadSync(NULL));
 		printf("...file loaded!\n");
+		printf("File INFO: %ld\n",file);
 	} else {
 		printf("...file not found\n");
 	}
 
 	// Clean up
-	free3(file_path_raw);
-	free3(sectors_size);
-	free3(temp_file_info);
+	free3(filePathRaw);
+	free3(sectorsSize);
+	free3(tempFileInfo);
 	#else
 	//****** READING DATA FROM PCDRV
-	char* file_path_raw;
+	#define BUFFER 0x80100000
+	#define pBuffer (char*)BUFFER
+	char* filePathRaw;
 	int handler = -1;
-	file_path_raw = malloc3(7+ strlen(file_path));
-	strcpy(file_path_raw,"assets/");
-	strcat(file_path_raw,file_path);
-	printf("Loading file from PCDRV: %s\n", file_path_raw);
-	handler = PCopen( file_path_raw, FILEMODE_READONLY, 0);
+	filePathRaw = malloc3(7+ strlen(filePath));
+	strcpy(filePathRaw,"assets/");
+	strcat(filePathRaw,filePath);
+	printf("Loading file from PCDRV: %s\n", filePathRaw);
+	handler = PCopen( filePathRaw, FILEMODE_READONLY, 0);
 	if(handler == -1){
-		printf("File Not Found %s\n",file_path_raw);
+		printf("File Not Found %s\n",filePathRaw);
 		
 	}
 	else{
-		printf("File Found!!! %s\n",file_path_raw);
+		printf("File Found!!! %s\n",filePathRaw);
 		int fileSize = PClseek( handler, 0, 2 );
 			if ( fileSize == -1 ){
-				printf( "Couldn't seek to find the file size..." );
+				printf( "Couldn't seek to find the file size...\n" );
 			} else {
 				int returnToStart;
 				printf( "File size 0x%x\n", fileSize );
+				printf("Allocating space for load\n");
+				*file = malloc3(fileSize);
+
 				returnToStart = PClseek( handler, 0, 0 );
 				if ( fileSize == -1 ){
-                        printf( "Couldn't seek back to the start of the file..." );
+                        printf( "Couldn't seek back to the start of the file...\n" );
                     } else {
-						int newThingy = -1;
-						
-						char buf[16];
-						PCread(handler, buf, fileSize);
-                   		//PCread( handler, buf, fileSize );
-						if ( newThingy == -1 ){
-                            printf("Error reading the file!");
+						printf("Seek back to start of file succesful. Reading file now.. \n");
+						lastOpsVal = PCread(handler,pBuffer, fileSize);
+                   		*file = (u_long*)pBuffer;
+						if ( lastOpsVal == -1 ){
+                            printf("Error reading the file!\n");
                         } else {
-                            printf("Loaded File!!");
+                            printf("Loaded File!!\n");
+							printf("File INFO: %ld\n",&file);
                         }
-
-						
 					}
 			}
-
+				printf("Closing File!!\n");
+				lastOpsVal = PCclose(handler);
+				if(lastOpsVal == -1){
+					printf("File Closing Error!!\n");
+				}else{
+					printf("File Closed!\n");
+				}
 
 	}
 
 
-	free3(file_path_raw);
+	free3(filePathRaw);
 
 	#endif
 }
