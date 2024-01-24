@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<iso_project image_name="test3d.iso">
+<iso_project image_name="psxtest3d.iso">
 	<track type="data">
 		<license file="LICENSEA.DAT"/>
 		<!-- Specifies identifier strings such as volume label -->
@@ -14,7 +14,7 @@
         		/>
 		<directory_tree>
 			<file name="SYSTEM.CNF"	type="data"	source="./SYSTEM.CNF"/>
-			<file name="main.ps-exe"	type="data"	source="./test3d.ps-exe"/>
+			<file name="main.ps-exe"	type="data"	source="./psxtest3d.ps-exe"/>
 			<!-- Add your own files or folders here -->
 			<file name="YOSHI.TIM"	type="data"	source="./assets/yoshi.tim"/>
 			<file name="YOSHI.TMD"	type="data"	source="./assets/YOSHI.TMD"/>
