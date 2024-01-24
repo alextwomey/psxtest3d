@@ -9,6 +9,7 @@
 #include <LIBCD.H>
 #include <STRINGS.H>
 #include <SYS/TYPES.H>
+#include <LIBSN.H>
 
 //Declare Stuff Here
 void clear_vram();

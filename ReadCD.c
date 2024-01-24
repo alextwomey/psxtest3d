@@ -3,66 +3,70 @@
 #include <SYS/TYPES.H>
 #include <STDLIB.H>
 #include <STDIO.H>
-#define SECTOR 2048
+#include <LIBSN.H>
+#include <stdint.h>
+#include <pcdrv.h>
 
+
+
+//comment out of not full release for CD!!
+//**********************************
+// FOR RELEASE  ********************
+//**********************************
+//#define _RELEASE_
+
+
+#ifdef _RELEASE_
+#define SECTOR 2048
+#else
+#define FILEMODE_READONLY 0
+#define FILEMODE_WRITEONLY 1
+#define FILEMODE_READWRITE 2
+uint8_t buffer[2048] = { 0 };
+#endif
+
+
+#ifdef _RELEASE_
 int didInitDs = 0;
+#else
+int lastOpsVal = 0;
+
+#endif
 
 void ReadCDInit() {
 	printf("\nReserving 1024KB (1,048,576 Bytes) RAM... \n");
     InitHeap3((void*)0x800F8000, 0x00100000);
     printf("Success!\n");
+	#ifdef _RELEASE_
+	#else
+	lastOpsVal = PCinit();
+	#endif
 }
 
 void cd_open() {
+	#ifdef _RELEASE_
 	if(!didInitDs) {
 		didInitDs = 1;
 		DsInit();
 	}
+	#else
+
+	#endif
 }
 
 void cd_close() {
+	#ifdef _RELEASE_
 	if(didInitDs) {
 		didInitDs = 0;
 		DsClose();
 	}
-}
+	#else 
 
-void initThatCd(void){
-	int CdInit(void);
-}
-
-char *cd_read_file_test(unsigned char* file_path){
-	DslFILE filePos;
-	int numsecs;
-	char *buff;
-	printf("about to search for file %s\n",file_path);
-	if( DsSearchFile(&filePos, file_path)==NULL){
-		printf("File %s not found \n",file_path);
-	}else{
-		printf("File %s found!!!!!!!\n",file_path);
-		/* calculate number of sectors to read for the file */
-    	numsecs = (filePos.size+2047)/2048;
-		printf("Size of sectors to read: %d\n");
-		/* allocate buffer for the file */
-		buff = (char*)malloc( 2048*numsecs );
-		
-		/* set read target to the file */
-		DsControl( DslSetloc, (u_char*)&filePos, 0 );
-		
-		/* start read operation */
-		DsRead(&filePos.pos, ((*buff + SECTOR - 1) / SECTOR), (u_long*)buff, DslModeSpeed);
-		
-		/* wait until the read operation is complete */
-		printf("read sync \n");
-		while(DsReadSync(NULL));
-		printf("file Loaded!\n");
-		return buff;
-	}
-	
+	#endif
 }
 
 void cd_read_file(unsigned char* file_path, u_long** file) {
-
+	#ifdef _RELEASE_
 	u_char* file_path_raw;
 	int* sectors_size;
 	DslFILE* temp_file_info;
@@ -105,5 +109,51 @@ void cd_read_file(unsigned char* file_path, u_long** file) {
 	free3(file_path_raw);
 	free3(sectors_size);
 	free3(temp_file_info);
+	#else
+	//****** READING DATA FROM PCDRV
+	char* file_path_raw;
+	int handler = -1;
+	file_path_raw = malloc3(7+ strlen(file_path));
+	strcpy(file_path_raw,"assets/");
+	strcat(file_path_raw,file_path);
+	printf("Loading file from PCDRV: %s\n", file_path_raw);
+	handler = PCopen( file_path_raw, FILEMODE_READONLY, 0);
+	if(handler == -1){
+		printf("File Not Found %s\n",file_path_raw);
+		
+	}
+	else{
+		printf("File Found!!! %s\n",file_path_raw);
+		int fileSize = PClseek( handler, 0, 2 );
+			if ( fileSize == -1 ){
+				printf( "Couldn't seek to find the file size..." );
+			} else {
+				int returnToStart;
+				printf( "File size 0x%x\n", fileSize );
+				returnToStart = PClseek( handler, 0, 0 );
+				if ( fileSize == -1 ){
+                        printf( "Couldn't seek back to the start of the file..." );
+                    } else {
+						int newThingy = -1;
+						
+						char buf[16];
+						PCread(handler, buf, fileSize);
+                   		//PCread( handler, buf, fileSize );
+						if ( newThingy == -1 ){
+                            printf("Error reading the file!");
+                        } else {
+                            printf("Loaded File!!");
+                        }
 
+						
+					}
+			}
+
+
+	}
+
+
+	free3(file_path_raw);
+
+	#endif
 }

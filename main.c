@@ -15,9 +15,7 @@
 #include "Audio.c"
 #include "2D.c"
 #include "3D.c"
-
-//include my binary files here
-#include "../../assets/yoshi.c"
+#include <LIBSN.H>
 
 //Declare any function you make here
 void Initialize();
@@ -113,8 +111,8 @@ void Initialize() {
 	//cdData[1] = (u_int*)cd_read_file_test("\\YOSHI.TIM;1");
 	//cdData[2] = (u_int*)cd_read_file_test("\\GRID.TMD;1");
 	cd_read_file("YOSHI.TMD", &cdData[0]);
-	cd_read_file("YOSHI.TIM", &cdData[1]);
-	cd_read_file("GRID.TMD", &cdData[2]);
+	//cd_read_file("YOSHI.TIM", &cdData[1]);
+	//cd_read_file("GRID.TMD", &cdData[2]);
 	//Stop reading the CD
 	cd_close();
 
@@ -122,7 +120,7 @@ void Initialize() {
 	//The number is the slot you want to load from.
 	//when we used the cd_read_file function, we
 	//stored the CAR.TIM texture in slot 1
-    loadTexture((u_char *)cdData[1]);
+    //loadTexture((u_char *)cdData[1]);
 
 }
 
@@ -177,7 +175,7 @@ void Start() {
 
 	//The background color of the scene
 	//in RGB (values between 0-255)
-	SetBGColor(157, 176, 209);
+	SetBGColor(0, 21, 255);
 
 	//Set the color of ambient light in RGB
 	SetAmbientLight(67, 67, 67);
