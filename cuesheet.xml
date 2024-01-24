@@ -3,13 +3,22 @@
 <iso_project image_name="test3d.iso">
 	<track type="data">
 		<license file="LICENSEA.DAT"/>
+		<!-- Specifies identifier strings such as volume label -->
+      	 	<!-- System and application identifiers must be PLAYSTATION -->
+        	<identifiers
+            		system      ="PLAYSTATION"
+           		 application ="PLAYSTATION"
+           		 volume      ="PSXTEST"
+           		 volume_set  ="PSXTEST"
+           		 publisher   ="MoonRiverProductions"
+        		/>
 		<directory_tree>
 			<file name="SYSTEM.CNF"	type="data"	source="./SYSTEM.CNF"/>
 			<file name="main.ps-exe"	type="data"	source="./test3d.ps-exe"/>
 			<!-- Add your own files or folders here -->
-			<file name="yoshi.TIM"	type="data"	source="assets/yoshi.tim"/>
-			<file name="yoshi.TMD"	type="data"	source="assets/YOSHI.TMD"/>
-			<file name="GRID.TMD"	type="data"	source="assets/GRID.TMD"/>
+			<file name="YOSHI.TIM"	type="data"	source="./assets/yoshi.tim"/>
+			<file name="YOSHI.TMD"	type="data"	source="./assets/YOSHI.TMD"/>
+			<file name="GRID.TMD"	type="data"	source="./assets/GRID.TMD"/>
 			<dummy sectors="1024"/>
 		</directory_tree>
 	</track>

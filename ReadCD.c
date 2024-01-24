@@ -1,13 +1,8 @@
-#include <STDLIB.H>
-#include <STDIO.H>
-#include <LIBGTE.H>
-#include <LIBGPU.H>
-#include <LIBGS.H>
-#include <LIBETC.H>
-#include <LIBSPU.H>
-#include <LIBDS.H>
+#include <LIBCD.H>
 #include <STRINGS.H>
 #include <SYS/TYPES.H>
+#include <STDLIB.H>
+#include <STDIO.H>
 #define SECTOR 2048
 
 int didInitDs = 0;
@@ -32,6 +27,37 @@ void cd_close() {
 	}
 }
 
+void initThatCd(void){
+	int CdInit(void);
+}
+
+char *cd_read_file_test(unsigned char* file_path){
+	CdlFILE filePos;
+	int numsecs;
+	char *buff;
+	printf("about to search for file %s\n",file_path);
+	if( CdSearchFile(&filePos, file_path)==NULL){
+		printf("File %s not found \n",file_path);
+	}else{
+		printf("File %s found!!!!!!!\n",file_path);
+		/* calculate number of sectors to read for the file */
+    	numsecs = (filePos.size+2047)/2048;
+		printf("Size of sectors to read: %d");
+		/* allocate buffer for the file */
+		buff = (char*)malloc( 2048*numsecs );
+		
+		/* set read target to the file */
+		CdControl( CdlSetloc, (u_char*)&filePos, 0 );
+		
+		/* start read operation */
+		CdRead( numsecs, (u_long*)buff, CdlModeSpeed );
+		
+		/* wait until the read operation is complete */
+		CdReadSync( 0, 0 );
+	}
+	
+}
+
 void cd_read_file(unsigned char* file_path, u_long** file) {
 
 	u_char* file_path_raw;
@@ -48,13 +74,13 @@ void cd_read_file(unsigned char* file_path, u_long** file) {
 
 	// Get raw file path
 	file_path_raw = malloc3(4 + strlen(file_path));
-	strcpy(file_path_raw, "/");
+	strcpy(file_path_raw, "\\");
 	strcat(file_path_raw, file_path);
 	strcat(file_path_raw, ";1");
 	printf("Loading file from CD: %s\n", file_path_raw);
-
 	// Search for file on disc
-	DsSearchFile(temp_file_info, file_path_raw);
+	DsSearchFile(file_path_raw, temp_file_info);
+	
 
 	// Read the file if it was found
 	if(temp_file_info->size > 0) {

@@ -6,6 +6,7 @@
 #include <LIBETC.H>
 #include <LIBSPU.H>
 #include <LIBDS.H>
+#include <LIBCD.H>
 #include <STRINGS.H>
 #include <SYS/TYPES.H>
 

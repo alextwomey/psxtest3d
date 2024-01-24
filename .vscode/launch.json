@@ -44,7 +44,7 @@
       "executable": "${workspaceRoot}/${workspaceRootFolderName}.elf",
       "autorun": [
         "monitor reset hard shellhalt",
-        "monitor mountcd test3d.iso",
+        "monitor mountcd ${workspaceRoot}/${workspaceRootFolderName}.iso",
         "load ${workspaceRootFolderName}.elf",
         "tbreak main",
         "continue"

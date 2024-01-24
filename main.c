@@ -88,27 +88,35 @@ int main() {
 void Initialize() {
 
     //get the CD system started so you can read files
-	ReadCDInit();
+	//ReadCDInit();
 
 	//do all the necessary steps for getting
 	//the screen ready to display things
 	initializeScreen();
-
+	
 	//get the controller system ready for
 	//reading input from the controller
 	initializePad();
 
     //Start reading the CD
-	cd_open();
+	//cd_open();
 
 	//read a specific file by name and
 	//store it in the cdData variable.
 	//(make sure to edit mkpsxiso/cuesheet.xml and
     //add it there or it won't be included on the CD)
     //The number is the slot you want to store the file into.
-	cd_read_file("assets/yoshi.TMD", &cdData[0]);
-	cd_read_file("assets/yoshi.TIM", &cdData[1]);
-	cd_read_file("assets/GRID.TMD", &cdData[2]);
+	initThatCd();
+	printf("CD File loading Initialized \n");
+
+	//, &cdData[0]
+	//pointer for file loaded from cd
+	u_int *filebuff;
+	if( filebuff = (u_int*)cd_read_file_test("\\\\YOSHI.TIM;1")){
+		printf("fileLoaded!!!!!! at %d", filebuff);
+	}
+	//cd_read_file_test("yoshi.TMD");
+	//cd_read_file_test("GRID.TMD");
 
 	//Stop reading the CD
 	cd_close();
