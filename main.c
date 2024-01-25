@@ -105,21 +105,11 @@ void Initialize() {
     //The number is the slot you want to store the file into.
 	printf("CD File loading Initialized \n");
 
-	//, &cdData[0]
-	//cdData[0] = (u_int*)cd_read_file_test("\\YOSHI.TMD;1");
-	//cdData[1] = (u_int*)cd_read_file_test("\\YOSHI.TIM;1");
-	//cdData[2] = (u_int*)cd_read_file_test("\\GRID.TMD;1");
 	cd_read_file("YOSHI.TMD", &cdData[0]);
-	printf("cdData[0]: %ld\n",cdData[0]);
 	cd_read_file("YOSHI.TIM", &cdData[1]);
-	printf("cdData[1]: %ld\n",cdData[1]);
 	cd_read_file("GRID.TMD", &cdData[2]);
-	printf("cdData[2]: %ld\n",cdData[2]);
 	//Stop reading the CD
 	cd_close();
-	printf("cdData[0]: %ld\n",cdData[0]);
-	printf("cdData[1]: %ld\n",cdData[1]);
-	printf("cdData[2]: %ld\n",cdData[2]);
 
 	//load the TIM texture into VRAM
 	//The number is the slot you want to load from.

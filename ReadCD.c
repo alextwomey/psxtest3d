@@ -30,7 +30,7 @@
 int didInitDs = 0;
 #else
 int lastOpsVal = 0;
-
+void* pBuffer = (char*)0x80100000;
 #endif
 
 void ReadCDInit() {
@@ -40,6 +40,7 @@ void ReadCDInit() {
 	#ifdef _RELEASE_
 	#else
 	lastOpsVal = PCinit();
+	   	
 	#endif
 }
 
@@ -112,10 +113,7 @@ void cd_read_file(unsigned char* filePath, u_long** file) {
 	free3(tempFileInfo);
 	#else
 	//****** READING DATA FROM PCDRV
-	char* fileBuffer;
 	char* filePathRaw;
-    void* pBuffer = (char*)0x80100000;
-	//tempFileInfo = malloc3(sizeof());
 	int handler = -1;
 	filePathRaw = malloc3(7+ strlen(filePath));
 	strcpy(filePathRaw,"assets/");
@@ -124,7 +122,6 @@ void cd_read_file(unsigned char* filePath, u_long** file) {
 	handler = PCopen( filePathRaw, FILEMODE_READONLY, 0);
 	if(handler == -1){
 		printf("File Not Found %s\n",filePathRaw);
-		
 	}
 	else{
 		printf("File Found!!! %s\n",filePathRaw);
@@ -133,29 +130,21 @@ void cd_read_file(unsigned char* filePath, u_long** file) {
 				printf( "Couldn't seek to find the file size...\n" );
 			} else {
 				int returnToStart;
-				printf( "File size 0x%x\n", fileSize );
-				printf("Allocating space for load\n");
 				*file = malloc3(fileSize);
-				pBuffer += fileSize;
-				printf("******file pointer location: %ld, %ld\n",file,&file);
 				returnToStart = PClseek( handler, 0, 0 );
 				if ( fileSize == -1 ){
                         printf( "Couldn't seek back to the start of the file...\n" );
                     } else {
-						printf("Seek back to start of file succesful. Reading file now.. \n");
-						//printf("### pBuffer location: %i \n",(char)*pBuffer);
 						lastOpsVal = PCread(handler,pBuffer, fileSize);
-						printf("FILE SIZE READ: %d\n",lastOpsVal);
                    		*file = pBuffer;
+						pBuffer += fileSize;
 						if ( lastOpsVal == -1 ){
                             printf("Error reading the file!\n");
                         } else {
                             printf("Loaded File!!\n");
-							printf("File INFO: %ld\n",&file);
                         }
 					}
 			}
-				printf("Closing File!!\n");
 				lastOpsVal = PCclose(handler);
 				if(lastOpsVal == -1){
 					printf("File Closing Error!!\n");
