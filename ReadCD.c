@@ -22,6 +22,7 @@
 #define FILEMODE_WRITEONLY 1
 #define FILEMODE_READWRITE 2
 
+
 #endif
 
 
@@ -111,9 +112,10 @@ void cd_read_file(unsigned char* filePath, u_long** file) {
 	free3(tempFileInfo);
 	#else
 	//****** READING DATA FROM PCDRV
-	#define BUFFER 0x80100000
-	#define pBuffer (char*)BUFFER
+	char* fileBuffer;
 	char* filePathRaw;
+    void* pBuffer = (char*)0x80100000;
+	//tempFileInfo = malloc3(sizeof());
 	int handler = -1;
 	filePathRaw = malloc3(7+ strlen(filePath));
 	strcpy(filePathRaw,"assets/");
@@ -134,14 +136,17 @@ void cd_read_file(unsigned char* filePath, u_long** file) {
 				printf( "File size 0x%x\n", fileSize );
 				printf("Allocating space for load\n");
 				*file = malloc3(fileSize);
-
+				pBuffer += fileSize;
+				printf("******file pointer location: %ld, %ld\n",file,&file);
 				returnToStart = PClseek( handler, 0, 0 );
 				if ( fileSize == -1 ){
                         printf( "Couldn't seek back to the start of the file...\n" );
                     } else {
 						printf("Seek back to start of file succesful. Reading file now.. \n");
+						//printf("### pBuffer location: %i \n",(char)*pBuffer);
 						lastOpsVal = PCread(handler,pBuffer, fileSize);
-                   		*file = (u_long*)pBuffer;
+						printf("FILE SIZE READ: %d\n",lastOpsVal);
+                   		*file = pBuffer;
 						if ( lastOpsVal == -1 ){
                             printf("Error reading the file!\n");
                         } else {
