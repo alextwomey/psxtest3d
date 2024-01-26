@@ -23,7 +23,7 @@ void Update();
 void Render();
 void Controls();
 
-
+static u_char ramAddr[1024 * 1024];
 
 
 
@@ -65,7 +65,8 @@ struct {
 //The main function is the first
 //thing that runs in your game
 int main() {
-
+	InitHeap3((u_long*)ramAddr, sizeof(ramAddr));
+	printf("Initializing heap\n");
     //all the functions here are described below
 
 	Initialize();

@@ -30,17 +30,15 @@
 int didInitDs = 0;
 #else
 int lastOpsVal = 0;
-static u_char ramAddr[1024 * 1024];
-void* dataBuffer;
+void* dataBuffer; 
+ 
 #endif
 
 void ReadCDInit() {
-	char heap[1024 * 1024];
-	InitHeap3((u_long*)ramAddr, sizeof(ramAddr));
 	#ifdef _RELEASE_
 	#else
 	lastOpsVal = PCinit();
-	   	
+		
 	#endif
 }
 
@@ -132,10 +130,11 @@ void cd_read_file(unsigned char* filePath, u_long** file) {
 				int returnToStart;
 				
 				returnToStart = PClseek( handler, 0, 0 );
-				if ( fileSize == -1 ){
+				printf("return to start %d\n",returnToStart);
+				if ( returnToStart == -1 ){
                         printf( "Couldn't seek back to the start of the file...\n" );
                     } else {
-						dataBuffer = malloc(fileSize);
+						dataBuffer = malloc3(fileSize);
 						printf("File Size is: %d\n",fileSize);
 						lastOpsVal = PCread(handler,dataBuffer, fileSize);
 						printf("reeead\n");
