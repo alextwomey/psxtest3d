@@ -30,7 +30,7 @@
 int didInitDs = 0;
 #else
 int lastOpsVal = 0;
-void* dataBuffer; 
+	
  
 #endif
 
@@ -38,7 +38,7 @@ void ReadCDInit() {
 	#ifdef _RELEASE_
 	#else
 	lastOpsVal = PCinit();
-		
+	
 	#endif
 }
 
@@ -112,8 +112,10 @@ void cd_read_file(unsigned char* filePath, u_long** file) {
 	#else
 	//****** READING DATA FROM PCDRV
 	char* filePathRaw;
+	char* dataBuffer;
 	int handler = -1;
 	filePathRaw = malloc3(7+ strlen(filePath));
+
 	strcpy(filePathRaw,"assets/");
 	strcat(filePathRaw,filePath);
 	printf("Loading file from PCDRV: %s\n", filePathRaw);
@@ -134,11 +136,15 @@ void cd_read_file(unsigned char* filePath, u_long** file) {
 				if ( returnToStart == -1 ){
                         printf( "Couldn't seek back to the start of the file...\n" );
                     } else {
+						
+						dataBuffer = &fileSize;
+						*file = &fileSize;
 						dataBuffer = malloc3(fileSize);
+						*file = malloc(fileSize);
 						printf("File Size is: %d\n",fileSize);
 						lastOpsVal = PCread(handler,dataBuffer, fileSize);
-						printf("reeead\n");
-                   		*file = dataBuffer;
+						printf("last ops %d\n",lastOpsVal);
+                   		*file = &dataBuffer;
 						if ( lastOpsVal == -1 ){
                             printf("Error reading the file!\n");
                         } else {
