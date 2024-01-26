@@ -30,13 +30,13 @@
 int didInitDs = 0;
 #else
 int lastOpsVal = 0;
-void* pBuffer = (char*)0x80100000;
+static u_char ramAddr[1024 * 1024];
+void* dataBuffer;
 #endif
 
 void ReadCDInit() {
-	printf("\nReserving 1024KB (1,048,576 Bytes) RAM... \n");
-    InitHeap3((void*)0x800F8000, 0x00100000);
-    printf("Success!\n");
+	char heap[1024 * 1024];
+	InitHeap3((u_long*)ramAddr, sizeof(ramAddr));
 	#ifdef _RELEASE_
 	#else
 	lastOpsVal = PCinit();
@@ -130,14 +130,16 @@ void cd_read_file(unsigned char* filePath, u_long** file) {
 				printf( "Couldn't seek to find the file size...\n" );
 			} else {
 				int returnToStart;
-				*file = malloc3(fileSize);
+				
 				returnToStart = PClseek( handler, 0, 0 );
 				if ( fileSize == -1 ){
                         printf( "Couldn't seek back to the start of the file...\n" );
                     } else {
-						lastOpsVal = PCread(handler,pBuffer, fileSize);
-                   		*file = pBuffer;
-						pBuffer += fileSize;
+						dataBuffer = malloc(fileSize);
+						printf("File Size is: %d\n",fileSize);
+						lastOpsVal = PCread(handler,dataBuffer, fileSize);
+						printf("reeead\n");
+                   		*file = dataBuffer;
 						if ( lastOpsVal == -1 ){
                             printf("Error reading the file!\n");
                         } else {
@@ -156,6 +158,6 @@ void cd_read_file(unsigned char* filePath, u_long** file) {
 
 
 	free3(filePathRaw);
-
+	free3(dataBuffer);
 	#endif
 }
