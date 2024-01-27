@@ -105,9 +105,10 @@ void Initialize() {
     //The number is the slot you want to store the file into.
 	printf("CD File loading Initialized \n");
 
-	cd_read_file("YOSHI.TMD", &cdData[0]);
-	cd_read_file("YOSHI.TIM", &cdData[1]);
-	cd_read_file("GRID.TMD", &cdData[2]);
+	
+	cd_read_file("YOSHI.TIM", &cdData[0]);
+	cd_read_file("GRID.TMD", &cdData[1]);
+	cd_read_file("YOSHI.TMD", &cdData[2]);
 	//Stop reading the CD
 	cd_close();
 
@@ -115,7 +116,7 @@ void Initialize() {
 	//The number is the slot you want to load from.
 	//when we used the cd_read_file function, we
 	//stored the CAR.TIM texture in slot 1
-    loadTexture((u_char *)cdData[1]);
+    loadTexture((u_char *)cdData[0]);
 
 }
 
@@ -141,8 +142,8 @@ void Start() {
     //    Lighting on=1 off=0
     //);
 
-	ObjectCount += LoadTMD(cdData[2], &Object[0], 1); /* Grid */
-	ObjectCount += LoadTMD(cdData[0], &Object[1], 1); /* Cube */
+	ObjectCount += LoadTMD(cdData[1], &Object[0], 1); /* Grid */
+	ObjectCount += LoadTMD(cdData[2], &Object[1], 1); /* Cube */
 
 	//Set all the initial starting positions and
 	//rotations here for every loaded object
