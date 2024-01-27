@@ -28,6 +28,7 @@
 
 #ifdef _RELEASE_
 int didInitDs = 0;
+//extern char __heap_start, __sp;
 #else
 int lastOpsVal = 0;
 void* pBuffer = (char*)0x80100000;
@@ -36,11 +37,13 @@ void* pBuffer = (char*)0x80100000;
 void ReadCDInit() {
 	printf("\nReserving 1024KB (1,048,576 Bytes) RAM... \n");
     InitHeap3((void*)0x800F8000, 0x00100000);
+	//InitHeap3(&__heap_start, (&__sp - 0x1000) - &__heap_start); // 0x1000 is how much stack space you want to reserve
     printf("Success!\n");
 	#ifdef _RELEASE_
+	printf("RELEASE MODE SET ON\n");
 	#else
 	lastOpsVal = PCinit();
-	   	
+	printf("DEBUG MODE!!!\n");
 	#endif
 }
 

@@ -58,22 +58,12 @@ void initializeScreen() {
 	ResetGraph(0);
 	//clear_vram();
 
-	// Automatically adjust screen to PAL or NTCS from license
-	if (*(char *)0xbfc7ff52=='E') { // SCEE string address
-    	// PAL MODE
-    	SCREEN_WIDTH = 320;
-    	SCREEN_HEIGHT = 256;
-    	printf("Setting the PlayStation Video Mode to (PAL %dx%d)\n",SCREEN_WIDTH,SCREEN_HEIGHT);
-    	SetVideoMode(1);
-    	printf("Video Mode is (%ld)\n",GetVideoMode());
-   	} else {
-     	// NTSC MODE
-     	SCREEN_WIDTH = 320;
-     	SCREEN_HEIGHT = 240;
-     	printf("Setting the PlayStation Video Mode to (NTSC %dx%d)\n",SCREEN_WIDTH,SCREEN_HEIGHT);
-     	SetVideoMode(0);
-     	printf("Video Mode is (%ld)\n",GetVideoMode());
-   }
+	// NTSC MODE
+	SCREEN_WIDTH = 320;
+	SCREEN_HEIGHT = 240;
+	printf("Setting the PlayStation Video Mode to (NTSC %dx%d)\n",SCREEN_WIDTH,SCREEN_HEIGHT);
+	SetVideoMode(0);
+	printf("Video Mode is (%ld)\n",GetVideoMode());
 	GsInitGraph(SCREEN_WIDTH, SCREEN_HEIGHT, GsINTER|GsOFSGPU, 1, 0);
 	GsDefDispBuff(0, 0, 0, SCREEN_HEIGHT);
 

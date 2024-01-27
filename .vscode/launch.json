@@ -41,11 +41,11 @@
       "osx": {
         "gdbpath": "gdb"
       },
-      "executable": "${workspaceRoot}/${workspaceRootFolderName}.elf",
+      "executable": "${workspaceRoot}/psx3d.elf",
       "autorun": [
         "monitor reset hard shellhalt",
-        "monitor mountcd ${workspaceRoot}/${workspaceRootFolderName}.iso",
-        "load ${workspaceRootFolderName}.elf",
+        "monitor mountcd ${workspaceRoot}/psx3d.iso",
+        "load psx3d.elf",
         "tbreak main",
         "continue"
       ]

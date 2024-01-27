@@ -1,4 +1,4 @@
-TARGET = psxtest3d
+TARGET = psx3d
 TYPE = ps-exe
 
 SRCS = \

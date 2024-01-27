@@ -1,4 +1,4 @@
-BOOT=cdrom:\psxtest3d.ps-exe;1
+BOOT=cdrom:\psx3d.ps-exe;1
 TCB=4
 EVENT=10
 STACK=801FFFF0

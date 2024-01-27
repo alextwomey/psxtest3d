@@ -116,6 +116,7 @@ void Initialize() {
 	//The number is the slot you want to load from.
 	//when we used the cd_read_file function, we
 	//stored the CAR.TIM texture in slot 1
+	
     loadTexture((u_char *)cdData[0]);
 
 }

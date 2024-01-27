@@ -1,25 +1,34 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!-- Defines the ISO project -->
+<iso_project image_name="psx3d.iso">
 
-<iso_project image_name="psxtest3d.iso">
-	<track type="data">
-		<license file="LICENSEA.DAT"/>
-		<!-- Specifies identifier strings such as volume label -->
-      	 	<!-- System and application identifiers must be PLAYSTATION -->
-        	<identifiers
-            		system      ="PLAYSTATION"
-           		 application ="PLAYSTATION"
-           		 volume      ="PSXTEST"
-           		 volume_set  ="PSXTEST"
-           		 publisher   ="MoonRiverProductions"
-        		/>
-		<directory_tree>
-			<file name="SYSTEM.CNF"	type="data"	source="./SYSTEM.CNF"/>
-			<file name="main.ps-exe"	type="data"	source="./psxtest3d.ps-exe"/>
+    <!-- Defines the data track for this tutorial -->
+    <track type="data">
+
+        <!-- Specifies identifier strings such as volume label -->
+        <!-- System and application identifiers must be PLAYSTATION -->
+        <identifiers
+            system      ="PLAYSTATION"
+            application ="PLAYSTATION"
+            volume      ="PSXTUTORIAL"
+            volume_set  ="PSXTUTORIAL"
+            publisher   ="MEIDOTEK"
+        />
+
+        <!-- Defines the directory tree of the data track -->
+        <directory_tree>
+
+            <!-- Specify files in the directory tree -->
+            <file name="system.cnf"      type="data" source="SYSTEM.CNF"/>
+            <file name="psx3d.ps-exe"    type="data" source="./psx3d.ps-exe"/>
 			<!-- Add your own files or folders here -->
-			<file name="YOSHI.TIM"	type="data"	source="./assets/yoshi.tim"/>
+			<file name="YOSHI.TIM"	type="data"	source="./assets/YOSHI.TIM"/>
 			<file name="YOSHI.TMD"	type="data"	source="./assets/YOSHI.TMD"/>
 			<file name="GRID.TMD"	type="data"	source="./assets/GRID.TMD"/>
-			<dummy sectors="1024"/>
-		</directory_tree>
-	</track>
+            <!-- Place dummy sectors at the end -->
+            <dummy sectors="1024"/>
+
+        </directory_tree>
+
+    </track>
+
 </iso_project>
